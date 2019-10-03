@@ -1,13 +1,25 @@
 {
-    "name": "com.example.echoblast",
-    "version": "1.0.0",
-    "description": "This is the project created from the Phaser 3 template",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "keywords": [
-        "ecosystem:cordova"
-    ],
-    "license": "ISC",
-    "displayName": "EchoBlast"
+  "name": "com.example.echoblast",
+  "version": "1.0.0",
+  "description": "This is the project created from the Phaser 3 template",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ecosystem:cordova"
+  ],
+  "license": "ISC",
+  "displayName": "EchoBlast",
+  "dependencies": {},
+  "cordova": {
+    "platforms": [],
+    "plugins": {
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-browsersync": {}
+    }
+  },
+  "devDependencies": {
+    "cordova-plugin-browsersync": "^1.1.0",
+    "cordova-plugin-whitelist": "^1.3.4"
+  }
 }
