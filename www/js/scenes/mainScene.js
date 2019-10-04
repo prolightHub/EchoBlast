@@ -60,6 +60,8 @@ export default class MainScene extends Phaser.Scene {
             buttons.onpointerdown.apply(this, arguments); 
         }, 
         this);
+
+        this.cameras.main.fadeIn(500, 0);
     }
 
     update ()
