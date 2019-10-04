@@ -10,6 +10,12 @@ document.addEventListener('deviceready', function()
         width: 800,
         height: 480,
         scene: [MainScene, PlayScene, FxScene],
+        physics: {
+            default: "arcade",
+            arcade: {
+                gravity: { y: 800 }
+            }
+        },
         backgroundColor: '#36B0C1'
     };
     
