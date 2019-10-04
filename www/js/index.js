@@ -1,6 +1,7 @@
 import MainScene from "./scenes/mainScene.js";
 import PlayScene from "./scenes/playScene.js";
 import FxScene from "./scenes/fxScene.js";
+import GameOverScene from "./scenes/gameOverScene.js";
 
 document.addEventListener('deviceready', function() 
 {
@@ -9,7 +10,7 @@ document.addEventListener('deviceready', function()
         parent: 'game',
         width: 800,
         height: 480,
-        scene: [MainScene, PlayScene, FxScene],
+        scene: [MainScene, PlayScene, GameOverScene, FxScene],
         physics: {
             default: "arcade",
             arcade: {

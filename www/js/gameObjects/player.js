@@ -11,6 +11,11 @@ export default class Player {
 
     update (time, delta)
     {   
+        if(this.dead)
+        {
+            return;
+        }
+
         // Set up variables
         const [ keys, sprite ] = [this.keys, this.sprite];
         let speed = 1000;
@@ -35,5 +40,36 @@ export default class Player {
         {
             sprite.body.setVelocityY(-jumpHeight);
         }
+
+        if(sprite.y > levelHandler.blockLayer.height + sprite.height)
+        {
+            this.kill();
+        }
+    }
+
+    onCollide (object, name)
+    {
+        switch(name)
+        {
+            case "lava" :
+                this.kill();
+                break;
+
+            case "door" :
+                if(this.keys.down.isDown && this.sprite.body.onFloor())
+                {
+                    this.enteredDoor = true;
+                    this.touchedObject = object;
+
+                    this.sprite.body.stop();
+                }
+                break;
+        }
+    }
+
+    kill ()
+    {
+        this.sprite.body.stop();
+        this.dead = true;
     }
 }

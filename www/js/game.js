@@ -25,6 +25,34 @@ var Game = (function()
         {
             
         }
+
+        gameOver (scene)
+        {
+            scene.scene.get("fxScene").fadeIO(1000, () =>
+            {
+                scene.scene.start("gameOverScene");
+            });
+
+            levelHandler.travelType = "spawnPoint";
+        }
+
+        onDoor (scene)
+        {
+            scene.scene.get("fxScene").fadeIO(1000, () =>
+            {
+                var player = scene.player;
+                var touchedObject = player.touchedObject;
+
+                const [ doorLevel, doorSymbol ] = touchedObject.obj.properties;
+
+                levelHandler.levelName = doorLevel.value;
+                levelHandler.doorSymbol = doorSymbol.value;
+
+                levelHandler.travelType = "door";
+
+                scene.scene.restart();
+            });
+        }
     }
 
     var instance;
