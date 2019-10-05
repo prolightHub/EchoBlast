@@ -21,9 +21,29 @@ var Game = (function()
             scene.scene.start('playScene');
         }
 
-        save ()
+        restore (func)
         {
-            
+            var self = this;
+            localforage.getItem("echoblast-saveData", function(err, value)
+            {
+                self.storedSaveData = JSON.parse(value);
+                return func.apply(this, arguments);
+            });
+        }
+
+        save (scene, player, saveBlock)
+        {
+            this.storedSaveData = {
+                levelName: levelHandler.levelName,
+                saveBlock: {
+                    name: saveBlock.obj.name
+                },
+                player: {
+                    // Stuff for player goes here
+                }
+            };
+
+            localforage.setItem("echoblast-saveData", JSON.stringify(this.storedSaveData));
         }
 
         gameOver (scene)

@@ -74,6 +74,17 @@
                  "width":32,
                  "x":448,
                  "y":256
+                }, 
+                {
+                 "height":32,
+                 "id":4,
+                 "name":"saveBlockA",
+                 "rotation":0,
+                 "type":"saveBlock",
+                 "visible":true,
+                 "width":32,
+                 "x":352,
+                 "y":192
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -82,7 +93,7 @@
          "y":0
         }],
  "nextlayerid":3,
- "nextobjectid":4,
+ "nextobjectid":7,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.2.4",
