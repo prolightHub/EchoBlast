@@ -22,6 +22,7 @@ document.addEventListener('deviceready', function()
         backgroundColor: '#36B0C1'
     };
     
+    // I should probably make a save file select scene and put this in here.
     game.restore(function()
     {
         window.phaserGame = new Phaser.Game(config);
