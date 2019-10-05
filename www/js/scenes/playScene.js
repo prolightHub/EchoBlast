@@ -10,6 +10,12 @@ export default class PlayScene extends Phaser.Scene {
 
     preload ()
     {
+        if((!this.player || this.player.dead) && game.storedSaveData)
+        {
+            levelHandler.travelType = "saveBlock";
+            levelHandler.levelName = game.storedSaveData.levelName;
+        }
+
         // This is probably not the way this was intended to use but okay.
         this.load.tilemapTiledJSON(levelHandler.levelName, "assets/tilemaps/" + levelHandler.levelName + ".json");
 
@@ -40,6 +46,12 @@ export default class PlayScene extends Phaser.Scene {
                     levelHandler.lastSpawnPointLevel = levelHandler.levelName;
                 break;
 
+            case "saveBlock" :
+                // We used a save block.
+                spawnPoint = levelHandler.level.findObject("Objects", obj => obj.name === game.storedSaveData.saveBlock.name);
+                spawnPoint.y += 32;
+                break;
+
             case "door" :
                     // Find corresponding door and place him there.
                     levelHandler.level.findObject("Objects", obj => 
@@ -54,16 +66,18 @@ export default class PlayScene extends Phaser.Scene {
                 break;
         }
 
-        // Ugh this will get in the way when bringing specific data to be saved but not saved yet...
-        this.player = new Player(this, spawnPoint.x, spawnPoint.y);
+        if(!this.player)
+        {
+            this.player = new Player(this, spawnPoint.x, spawnPoint.y);
+        }else{
+            this.player.cleanState();
+            this.player.createSprite(this, spawnPoint.x, spawnPoint.y);
+        }
 
         // Set up collision with the player for the walls and tiles
         this.player.sprite.body.setCollideWorldBounds(true);
         this.physics.world.setBounds(0, 0, levelHandler.level.widthInPixels, levelHandler.level.heightInPixels, true, true, true, false);
         this.physics.add.collider(this.player.sprite, levelHandler.blockLayer);
-
-        this.player.sprite.setScale(2, 2);
-        this.player.sprite.setOrigin(0, 0);
 
         // Have the camera start following the player and set the camera's bounds
         this.cameras.main.startFollow(this.player.sprite);
@@ -102,33 +116,44 @@ export default class PlayScene extends Phaser.Scene {
 
         levelHandler.level.findObject("Objects", obj => 
         {    
-            if(obj.type === "door")
+            if(obj.type === "saveBlock")
             {
-                var object = this.physics.add.sprite(obj.x, obj.y, "door").setOrigin(0, 0).setDepth(-1);
+                var object = this.physics.add.sprite(obj.x - 3, obj.y - 3, "saveBlock").setOrigin(0, 0).setDepth(-1);
 
-                object.body.setSize(obj.width, obj.height);
-
+                object.body.setSize(obj.width + 6, obj.height + 10);
                 object.body.moves = false;
-
                 object.setVisible(false);
-
                 object.obj = obj;
 
                 this.physics.add.overlap(this.player.sprite, object, function(objectA, objectB)
                 {
-                    this.player.onCollide.apply(this.player, [objectB, "door"]);
+                    this.player.onCollide.apply(this.player, [objectB, "saveBlock", this]);
+                }, 
+                null, this);
+            }
+            else if(obj.type === "door")
+            {
+                var object = this.physics.add.sprite(obj.x, obj.y, "door").setOrigin(0, 0).setDepth(-1);
+
+                object.body.setSize(obj.width, obj.height);
+                object.body.moves = false;
+                object.setVisible(false);
+                object.obj = obj;
+
+                this.physics.add.overlap(this.player.sprite, object, function(objectA, objectB)
+                {
+                    this.player.onCollide.apply(this.player, [objectB, "door", this]);
                 }, 
                 null, this);
             }
         });
 
-        this.doThisDoor = false;
-        this.doThisDeath = false;
+        this.isGameBusy = false;
     }
 
     update ()
     {
-        if(this.doThisDeath || this.doThisDoor)
+        if(this.isGameBusy)
         {
             return;
         }
@@ -137,14 +162,12 @@ export default class PlayScene extends Phaser.Scene {
 
         if(this.player.dead)
         {
-            this.doThisDeath = true;
-
+            this.isGameBusy = true;
             game.gameOver(this);
         }
         if(this.player.enteredDoor)
         {
-            this.doThisDoor = true;
-
+            this.isGameBusy = true;
             game.onDoor(this);
         }
     }

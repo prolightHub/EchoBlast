@@ -2,6 +2,7 @@ import MainScene from "./scenes/mainScene.js";
 import PlayScene from "./scenes/playScene.js";
 import FxScene from "./scenes/fxScene.js";
 import GameOverScene from "./scenes/gameOverScene.js";
+import game from "./game.js";
 
 document.addEventListener('deviceready', function() 
 {
@@ -21,7 +22,10 @@ document.addEventListener('deviceready', function()
         backgroundColor: '#36B0C1'
     };
     
-    window.phaserGame = new Phaser.Game(config);
+    game.restore(function()
+    {
+        window.phaserGame = new Phaser.Game(config);
+    });
 });
 
 //Prevent right click menu from showing because it is annoying

@@ -1,12 +1,24 @@
+import game from "../game.js";
+
 export default class Player {
 
     constructor (scene, x, y)
+    {
+        this.createSprite(scene, x, y);
+    }
+    
+    createSprite (scene, x, y)
     {
         // Set player
         this.sprite = scene.physics.add.sprite(x, y, "player");
         this.sprite.setDrag(100, 0).setMaxVelocity(250, 600).setDrag(100, 20);
       
+        this.sprite.setScale(2, 2);
+        this.sprite.setOrigin(0, 0);
+
         this.keys = scene.input.keyboard.createCursorKeys();
+
+        this.revive();
     }
 
     update (time, delta)
@@ -26,14 +38,11 @@ export default class Player {
         {
             sprite.body.setAccelerationX(-speed).setDrag(230, 20);
             sprite.setFlipX(true);
-			if ( sprite.body.onFloor ( ) )
 
+			if(sprite.body.onFloor())
 			{
-
-				sprite.play ( 'walk', true );
-
+				sprite.play('walk', true);
 			}
-
         }
         else if(keys.right.isDown) 
         {
@@ -57,7 +66,7 @@ export default class Player {
         }
 
         // Jump mechanics
-        if( ( keys.space.isDown || keys.up.isDown ) && ( sprite.body.onFloor() ) )
+        if((keys.space.isDown || keys.up.isDown) && sprite.body.onFloor())
         {
             sprite.body.setVelocityY(-jumpHeight);
         }
@@ -68,7 +77,7 @@ export default class Player {
         }
     }
 
-    onCollide (object, name)
+    onCollide (object, name, scene)
     {
         switch(name)
         {
@@ -85,13 +94,33 @@ export default class Player {
                     this.sprite.body.stop();
                 }
                 break;
+
+            case "saveBlock" :
+                if(this.sprite.body.blocked.up)
+                {
+                    game.save(scene, this, object);
+                }
+                break;
         }
     }
 
     kill ()
     {
-		this.sprite.play ( 'idle', true );
+		this.sprite.play('idle', true);
         this.sprite.body.stop();
         this.dead = true;
+    }
+
+    revive () 
+    {
+        this.dead = false;
+    }
+
+    cleanState ()
+    {
+        this.sprite.destroy();
+        this.enteredDoor = false;
+        delete this.touchedObject;
+        this.dead = false;
     }
 }
