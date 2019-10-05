@@ -39,28 +39,20 @@ export default class Player {
         {
             sprite.body.setAccelerationX(speed).setDrag(230, 20);
             sprite.setFlipX(false);
-			if ( sprite.body.onFloor ( ) )
 
+			if(sprite.body.onFloor())
 			{
-
-				sprite.play ( 'walk', true );
-
+				sprite.play('walk', true);
 			}
-
         }else{
             sprite.setAccelerationX(0).setDrag(600, 20);
 
 			// Only show the idle animation if the player is footed
-
 			// If this is not included, the player would look 
 			// idle while jumping
-
-			if ( sprite.body.onFloor ( ) )
-
+			if(sprite.body.onFloor())
 			{
-
-				sprite.play ( 'idle', true );
-
+				sprite.play('idle', true);
 			}
         }
 
@@ -70,18 +62,10 @@ export default class Player {
             sprite.body.setVelocityY(-jumpHeight);
         }
 
-		// Uncomment the below if you wish to re-add
-		// Also, remove these 3 lines
-
-		/*
-
-			if(sprite.y > levelHandler.blockLayer.height + sprite.height)
-			{
-				this.kill();
-			}
-
-		*/
-
+        if(sprite.y > levelHandler.blockLayer.height + sprite.height)
+        {
+            this.kill();
+        }
     }
 
     onCollide (object, name)
