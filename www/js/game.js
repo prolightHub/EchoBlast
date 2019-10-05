@@ -33,6 +33,7 @@ var Game = (function()
                 scene.scene.start("gameOverScene");
             });
 
+            levelHandler.levelName = levelHandler.lastSpawnPointLevel || levelHandler.levelName;
             levelHandler.travelType = "spawnPoint";
         }
 

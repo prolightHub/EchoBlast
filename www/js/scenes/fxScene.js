@@ -25,6 +25,16 @@ export default class FxScene extends Phaser.Scene {
         
     }
     
+    fadeIn (duration)
+    {
+        this.cameras.main.fadeIn(duration);
+    }
+
+    fadeOut (duration)
+    {
+        this.cameras.main.fadeOut(duration);
+    }
+
     fadeIO (duration, func)
     {
         var halfTime = duration / 2;
@@ -33,10 +43,11 @@ export default class FxScene extends Phaser.Scene {
         cam.once("camerafadeoutcomplete", () =>
         {
             func(cam);
+
             cam.fadeIn(halfTime);
         });
 
-        cam.fadeOut(halfTime, 0);
+        cam.fadeOut(halfTime);
     }
 }
 
