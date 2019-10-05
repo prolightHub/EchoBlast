@@ -37,6 +37,7 @@ export default class PlayScene extends Phaser.Scene {
             case "spawnPoint" :
                     // Find player spawn point and place him there
                     spawnPoint = levelHandler.level.findObject("Objects", obj => obj.name === "Player Spawn Point");
+                    levelHandler.lastSpawnPointLevel = levelHandler.levelName;
                 break;
 
             case "door" :
@@ -113,7 +114,7 @@ export default class PlayScene extends Phaser.Scene {
         if(this.player.enteredDoor)
         {
             this.doThisDoor = true;
-            
+
             game.onDoor(this);
         }
     }
