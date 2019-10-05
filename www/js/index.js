@@ -10,6 +10,7 @@ document.addEventListener('deviceready', function()
         parent: 'game',
         width: 800,
         height: 480,
+		pixelArt : true, 
         scene: [MainScene, PlayScene, GameOverScene, FxScene],
         physics: {
             default: "arcade",

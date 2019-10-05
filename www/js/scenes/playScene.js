@@ -13,13 +13,32 @@ export default class PlayScene extends Phaser.Scene {
         // This is probably not the way this was intended to use but okay.
         this.load.tilemapTiledJSON(levelHandler.levelName, "assets/tilemaps/" + levelHandler.levelName + ".json");
 
-        this.load.spritesheet("otherTiles-extruded", "assets/tilesets/otherTiles-extruded.png", 
-        { 
-            frameWidth: 32, 
-            frameHeight: 32 
-        });
+		this.load.spritesheet("otherTiles-extruded", "assets/tilesets/otherTiles-extruded.png", 
+		{ 
+			frameWidth: 32, 
+			frameHeight: 32 
+		});
 
-        this.load.image("player", 'assets/spritesheets/player.png');
+		/*
+
+			this.load.image("player", 'assets/spritesheets/player.png');
+
+		*/
+
+		// Load player animations from the player spritesheet & atlas JSON
+
+		this.load.atlas
+
+		(
+
+			'player', 
+
+				'assets/spritesheets/png/mario.png', 
+
+			'assets/spritesheets/png/mario.json'
+
+		);
+
     }
 
     create ()
@@ -56,6 +75,8 @@ export default class PlayScene extends Phaser.Scene {
         // Ugh this will get in the way when bringing specific data to be saved but not saved yet...
         this.player = new Player(this, spawnPoint.x, spawnPoint.y);
 
+		this.player.sprite.setScale ( 4, 4 );
+
         // Set up collision with the player for the walls and tiles
         this.player.sprite.body.setCollideWorldBounds(true);
         this.physics.world.setBounds(0, 0, levelHandler.level.widthInPixels, levelHandler.level.heightInPixels, true, true, true, false);
@@ -64,6 +85,68 @@ export default class PlayScene extends Phaser.Scene {
         // Have the camera start following the player and set the camera's bounds
         this.cameras.main.startFollow(this.player.sprite);
         this.cameras.main.setBounds(0, 0, levelHandler.level.widthInPixels, levelHandler.level.heightInPixels);
+
+		this.anims.create 
+
+		(
+
+			{
+
+				key : 'idle', 
+
+				frames : this.anims.generateFrameNames
+
+				(
+
+					'player', 
+
+					{
+
+						prefix : '000', 
+						start : 0, 
+						end : 0, 
+
+					}
+
+				), 
+
+				frameRate : 0, 
+				repeat : 0
+
+			}
+
+		);
+
+		this.anims.create 
+
+		(
+
+			{
+
+				key : 'walk', 
+
+				frames : this.anims.generateFrameNames
+
+				(
+
+					'player', 
+
+					{
+
+						prefix : '000', 
+						start : 0, 
+						end : 3, 
+
+					}
+
+				), 
+
+				frameRate : 10, 
+				repeat : -1
+
+			}
+
+		);
 
         // Set collision
         // I should probably start making es6 classes for tiles
