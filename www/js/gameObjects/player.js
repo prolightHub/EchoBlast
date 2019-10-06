@@ -15,10 +15,19 @@ export default class Player {
       
         this.sprite.setScale(2, 2);
         this.sprite.setOrigin(0, 0);
-
+        
         this.keys = scene.input.keyboard.createCursorKeys();
 
+        this.maxHp = 12;
+        this.hp = 12;
+
         this.revive();
+
+        this.lastHurtTime = 100;
+        this.hurtInterval = 1000;
+
+        this.lastBlinkTime = 0;
+        this.blinkInterval = 100;
     }
 
     update (time, delta)
@@ -26,6 +35,18 @@ export default class Player {
         if(this.dead)
         {
             return;
+        }
+
+        if(time - this.lastHurtTime < this.hurtInterval)
+        {
+            if(time - this.lastBlinkTime >= this.blinkInterval)
+            {
+                this.sprite.setVisible(!this.sprite._visible);
+
+                this.lastBlinkTime = time;
+            }
+        }else{
+            this.sprite.setVisible(true);
         }
 
         // Set up variables
@@ -77,12 +98,53 @@ export default class Player {
         }
     }
 
+    updateHearts (scene)
+    {
+        if(this.hearts)
+        {
+            this.hearts.destroy(true);
+        }
+
+        this.hearts = scene.add.group();
+
+        var heartsInt = this.hp / 4;
+
+        for(var i = 0; i < heartsInt; i++)
+        {
+            var name = "heart4";
+
+            if(i >= heartsInt - 1)
+            {
+                name = "heart" + (this.hp % 4 || 4);
+            }
+
+            this.hearts.create(30 + i * 40, 30, name).setScale(1.4, 1.4).setScrollFactor(0);
+        }
+    }
+
+    takeHit (amt, time, scene)
+    {
+        if(time - this.lastHurtTime >= this.hurtInterval)
+        {
+            this.hp -= amt;
+            this.updateHearts(scene);
+
+            if(this.hp <= 0)
+            {
+                this.kill();
+            }
+
+            this.lastHurtTime = time;
+        }
+    }
+
     onCollide (object, name, scene)
     {
         switch(name)
         {
             case "lava" :
-                this.kill();
+
+                this.takeHit(1, scene.time.now, scene);
                 break;
 
             case "door" :

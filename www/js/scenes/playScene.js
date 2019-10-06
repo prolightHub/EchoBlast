@@ -25,6 +25,11 @@ export default class PlayScene extends Phaser.Scene {
 			frameHeight: 32 
 		});
 
+        this.load.image("heart1", 'assets/images/heart1.png');        
+        this.load.image("heart2", 'assets/images/heart2.png');        
+        this.load.image("heart3", 'assets/images/heart3.png')     
+        this.load.image("heart4", 'assets/images/heart4.png');
+
 		// Load player animations from the player spritesheet & atlas JSON
 		this.load.atlas('player', 'assets/spritesheets/png/mario.png', 'assets/spritesheets/png/mario.json');
     }
@@ -73,16 +78,7 @@ export default class PlayScene extends Phaser.Scene {
             this.player.cleanState();
             this.player.createSprite(this, spawnPoint.x, spawnPoint.y);
         }
-
-        // Set up collision with the player for the walls and tiles
-        this.player.sprite.body.setCollideWorldBounds(true);
-        this.physics.world.setBounds(0, 0, levelHandler.level.widthInPixels, levelHandler.level.heightInPixels, true, true, true, false);
-        this.physics.add.collider(this.player.sprite, levelHandler.blockLayer);
-
-        // Have the camera start following the player and set the camera's bounds
-        this.cameras.main.startFollow(this.player.sprite);
-        this.cameras.main.setBounds(0, 0, levelHandler.level.widthInPixels, levelHandler.level.heightInPixels);
-
+        
 		this.anims.create({
             key : 'idle', 
             frames : this.anims.generateFrameNames('player', 
@@ -107,11 +103,20 @@ export default class PlayScene extends Phaser.Scene {
             repeat : -1
 		});
 
+        // Set up collision with the player for the walls and tiles
+        this.player.sprite.body.setCollideWorldBounds(true);
+        this.physics.world.setBounds(0, 0, levelHandler.level.widthInPixels, levelHandler.level.heightInPixels, true, true, true, false);
+        this.physics.add.collider(this.player.sprite, levelHandler.blockLayer);
+
+        // Have the camera start following the player and set the camera's bounds
+        this.cameras.main.startFollow(this.player.sprite);
+        this.cameras.main.setBounds(0, 0, levelHandler.level.widthInPixels, levelHandler.level.heightInPixels);
+
         // Set collision
         // I should probably start making es6 classes for tiles
         levelHandler.blockLayer.setTileIndexCallback(TILES.LAVA, function(objectA, objectB)
         {
-            this.player.onCollide.apply(this.player, [objectB, "lava"]);
+            this.player.onCollide.apply(this.player, [objectB, "lava", this]);
         }, this);
 
         levelHandler.level.findObject("Objects", obj => 
@@ -148,18 +153,20 @@ export default class PlayScene extends Phaser.Scene {
             }
         });
 
+        this.player.updateHearts(this);
+
         this.isGameBusy = false;
     }
 
-    update ()
+    update (time, delta)
     {
         if(this.isGameBusy)
         {
             return;
         }
 
-        this.player.update();
-
+        this.player.update(time, delta);
+      
         if(this.player.dead)
         {
             this.isGameBusy = true;
