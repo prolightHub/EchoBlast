@@ -43,7 +43,7 @@ export default class MainScene extends Phaser.Scene {
                 return;
             }
             
-            this.scene.get("fxScene").fadeIO(1000, () =>
+            this.scene.get("fxScene").fadeOut(500, () =>
             {
                 game.start(this);
 

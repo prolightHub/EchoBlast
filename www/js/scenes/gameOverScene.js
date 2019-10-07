@@ -40,6 +40,8 @@ export default class GameOverScene extends Phaser.Scene {
             });
         }, 
         this);
+
+        this.scene.get("fxScene").fadeIn(500);
     }
 
     update ()

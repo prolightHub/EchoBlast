@@ -4,10 +4,10 @@ export default class Player {
 
     constructor (scene, x, y)
     {
-        this.createSprite(scene, x, y);
+        this.createSprite(scene, x, y, true);
     }
     
-    createSprite (scene, x, y)
+    createSprite (scene, x, y, revive)
     {
         // Set player
         this.sprite = scene.physics.add.sprite(x, y, "player");
@@ -15,13 +15,17 @@ export default class Player {
       
         this.sprite.setScale(2, 2);
         this.sprite.setOrigin(0, 0);
+        this.sprite.setOffset(-1.5, 0);
         
         this.keys = scene.input.keyboard.createCursorKeys();
 
-        this.maxHp = 12;
-        this.hp = 12;
+        if(revive)
+        {
+            this.maxHp = 12;
+            this.hp = 12;
 
-        this.revive();
+            this.revive();
+        }
 
         this.lastHurtTime = 100;
         this.hurtInterval = 1000;
@@ -143,7 +147,6 @@ export default class Player {
         switch(name)
         {
             case "lava" :
-
                 this.takeHit(1, scene.time.now, scene);
                 break;
 
