@@ -10,11 +10,7 @@ export default class PlayScene extends Phaser.Scene {
 
     preload ()
     {
-        if((!this.player || this.player.dead) && game.storedSaveData)
-        {
-            levelHandler.travelType = "saveBlock";
-            levelHandler.levelName = game.storedSaveData.levelName;
-        }
+        game.beforePlaySceneLoad(this.player);
 
         // This is probably not the way this was intended to use but okay.
         this.load.tilemapTiledJSON(levelHandler.levelName, "assets/tilemaps/" + levelHandler.levelName + ".json");
@@ -76,6 +72,8 @@ export default class PlayScene extends Phaser.Scene {
             this.player = new Player(this, spawnPoint.x, spawnPoint.y);
         }else{
             this.player.cleanState();
+
+            // Revive health fully for now.
             this.player.createSprite(this, spawnPoint.x, spawnPoint.y);
         }
         
@@ -153,9 +151,16 @@ export default class PlayScene extends Phaser.Scene {
             }
         });
 
+        if(levelHandler.travelType === "spawnPoint" || levelHandler.travelType === "saveBlock")
+        {
+            game.putSaveDataIntoScene(this);
+        }
+
         this.player.updateHearts(this);
 
         this.isGameBusy = false;
+
+        this.scene.get("fxScene").fadeIn(500);
     }
 
     update (time, delta)

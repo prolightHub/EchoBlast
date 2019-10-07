@@ -1,4 +1,3 @@
-
 var Game = (function() 
 {
     /*
@@ -21,6 +20,15 @@ var Game = (function()
             scene.scene.start('playScene');
         }
 
+        beforePlaySceneLoad (player)
+        {
+            if((!player || player.dead) && this.storedSaveData)
+            {
+                levelHandler.travelType = "saveBlock";
+                levelHandler.levelName = this.storedSaveData.levelName;
+            }
+        }
+
         restore (func)
         {
             var self = this;
@@ -40,15 +48,25 @@ var Game = (function()
                 },
                 player: {
                     // Stuff for player goes here
+                    hp: player.hp,
+                    maxHp: player.maxHp
                 }
             };
 
             localforage.setItem("echoblast-saveData", JSON.stringify(this.storedSaveData));
         }
 
+        putSaveDataIntoScene (scene)
+        {
+            for(var i in this.storedSaveData.player)
+            {
+                scene.player[i] = this.storedSaveData.player[i];
+            }
+        }
+
         gameOver (scene)
         {
-            scene.scene.get("fxScene").fadeIO(1000, () =>
+            scene.scene.get("fxScene").fadeOut(500, () =>
             {
                 scene.scene.start("gameOverScene");
             });
@@ -59,7 +77,7 @@ var Game = (function()
 
         onDoor (scene)
         {
-            scene.scene.get("fxScene").fadeIO(1000, () =>
+            scene.scene.get("fxScene").fadeOut(500, () =>
             {
                 var player = scene.player;
                 var touchedObject = player.touchedObject;
@@ -68,7 +86,6 @@ var Game = (function()
 
                 levelHandler.levelName = doorLevel.value;
                 levelHandler.doorSymbol = doorSymbol.value;
-
                 levelHandler.travelType = "door";
 
                 scene.scene.restart();
