@@ -17,8 +17,6 @@ export default class MainScene extends Phaser.Scene {
 
     create ()
     {
-        game.init(this);
-
         this.add.text(400, 134, 'EchoBlast', 
         {
             fill: '#FFFFFF',
@@ -61,7 +59,7 @@ export default class MainScene extends Phaser.Scene {
         }, 
         this);
 
-        this.cameras.main.fadeIn(500, 0);
+        this.scene.get("fxScene").fadeIn(500);
     }
 
     update ()
