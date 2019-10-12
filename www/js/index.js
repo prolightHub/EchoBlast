@@ -13,16 +13,16 @@ document.addEventListener('deviceready', function()
         parent: 'game',
         width: 800,
         height: 480,
-		pixelArt : true, 
-        scene: [StartScene, SaveFileScene, MainScene, PlayScene, GameOverScene, FxScene],
+        pixelArt : true, 
+        dom: {
+            createContainer: true
+        },
+        scene: [SaveFileScene, StartScene, MainScene, PlayScene, GameOverScene, FxScene],
         physics: {
             default: "arcade",
             arcade: {
                 gravity: { y: 800 }
             }
-        },
-        dom: {
-            createContainer: true
         },
         backgroundColor: '#36B0C1'
     };

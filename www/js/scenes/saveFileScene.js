@@ -1,4 +1,7 @@
 import game from "../game.js";
+import TextBox from "../utils/textbox.js";
+
+var buttons = createButtons();
 
 export default class SaveFileScene extends Phaser.Scene {
 
@@ -15,18 +18,13 @@ export default class SaveFileScene extends Phaser.Scene {
     create ()
     {
         this.inputtingUsername = false;
-
-        this.scene.get("fxScene").fadeIn(500);   
         
         this.graphics = this.add.graphics({});
 
         var rectColor = new Phaser.Display.Color(0, 0, 0, 100);
-
         this.graphics.fillStyle(rectColor, rectColor.alphaGL);
         this.graphics.fillRect(0, 0, 800, 480);
-
         var rectColor2 = new Phaser.Display.Color(0, 0, 0, 100);
-
         this.graphics.fillStyle(rectColor2, rectColor2.alphaGL);
         this.graphics.fillRect(0, 0, 800, 60);
 
@@ -81,11 +79,14 @@ export default class SaveFileScene extends Phaser.Scene {
             switch(this.state)
             {
                 case "new" :
-                    
                     this.state = "used";
                     this.extraText.setText("");
 
                     scene.startInputUsername(this);
+                    break;
+
+                case "used" :
+                    game.start(scene);
                     break;
             }
         };
@@ -126,13 +127,42 @@ export default class SaveFileScene extends Phaser.Scene {
             align: 'center',
         })
         .setOrigin(0.5, 0.5);
+
+        this.graphics = this.add.graphics({});
+
+        this.input.keyboard.on("keydown", function(event)
+        {
+            if(this.textBox)
+            {
+                this.textBox.updateText(event);
+            }
+        }, this);
+
+        this.input.on('pointerdown', function (pointer) 
+        {
+            buttons.onpointerdown.apply(this, arguments); 
+        }, 
+        this);
+
+        this.scene.get("fxScene").fadeIn(500);   
     }
 
     update (time, delta)
     {
+        this.graphics.clear();
         this.buttonGraphics.clear();
-
         this.newSaveFiles.draw();
+
+        if(this.inputtingUsername)
+        {
+            this.textBox.update(this, time, delta);
+
+            buttons.create.color = (this.textBox.text.text.replace("|", "").length > 0) ? 
+                                    new Phaser.Display.Color(0, 140, 40) : 
+                                    new Phaser.Display.Color(0, 90, 100)
+        }
+
+        buttons.draw(this.graphics);
     }
 
     render ()
@@ -151,6 +181,29 @@ export default class SaveFileScene extends Phaser.Scene {
         delete this.UINewSaveFile;
 
         this.inputtingUsername = false;
+
+        this.textBox.destroy();
+        delete this.textBox;
+
+        buttons.create.text.destroy();        
+        delete buttons.create;
+    }
+
+    finishInputUsername ()
+    {
+        var username = this.textBox.text.text.replace("|", "");
+
+        if(username.length <= 0)
+        {
+            return;
+        }
+
+        var saveFile = this.UINewSaveFile;
+
+        this.endInputUsername();
+
+        saveFile.extraText.setText(username);
+        saveFile.state = "used";
     }
 
     startInputUsername (newSaveFile)
@@ -159,9 +212,28 @@ export default class SaveFileScene extends Phaser.Scene {
 
         this.UIGraphics.fillStyle(color, color.alphaGL);
         this.UIGraphics.fillRect(150, 0, 500, 480);
-        this.UIText.setText("Type your name!");
+        this.UIText.setText("Type your name:");
+
+        this.textBox = new TextBox(this, 325, 230, 150, 30);
+        this.textBox.draw(this, this.UIGraphics);
 
         this.UINewSaveFile = newSaveFile;
         this.inputtingUsername = true;
+
+        var scene = this;
+        buttons.create = new Button(this, 400, 400, 120, 40, new Phaser.Display.Color(0, 90, 100), "Create", 
+        {
+            fontSize: '20px',
+            fill: '#FFFFFF',
+            align: 'center',
+            fontFamily: '"Press Start 2P"'
+        }, 
+        function()
+        {
+            scene.finishInputUsername();
+        },
+        {
+            offsetX: 0.6
+        });
     }
 }

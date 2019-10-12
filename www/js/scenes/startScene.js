@@ -9,12 +9,7 @@ export default class StartScene extends Phaser.Scene {
 
     preload ()
     {
-        var url;
-        url = 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/plugins/dist/rexbbcodetextplugin.min.js';
-        this.load.plugin('rexbbcodetextplugin', url, true);
-      
-        url = 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/plugins/dist/rextexteditplugin.min.js';
-        this.load.plugin('rextexteditplugin', url, true);
+
     }
 
     create ()
@@ -46,33 +41,20 @@ export default class StartScene extends Phaser.Scene {
 
         this.input.keyboard.on("keydown", function(event)
         {
-            // if(this.cutScening)
-            // {
-            //     return;
-            // }
+            if(this.cutScening)
+            {
+                return;
+            }
 
-            // this.cutScening = true;
+            this.cutScening = true;
 
-            // this.scene.get("fxScene").fadeOut(500, () =>
-            // {
-            //     this.scene.start("saveFileScene");
+            this.scene.get("fxScene").fadeOut(500, () =>
+            {
+                this.scene.start("saveFileScene");
 
-            //     this.cutScening = false;
-            // });
+                this.cutScening = false;
+            });
         }, this);
-
-        var printText = this.add.rexBBCodeText(400, 300, 'abc', {
-            color: 'yellow',
-            fontSize: '24px',
-            fixedWidth: 200,
-            // fixedHeight: 30,
-            backgroundColor: '#333333',
-        })
-            .setOrigin(0.5)
-            .setInteractive()
-            .on('pointerdown', function () {
-                this.plugins.get('rextexteditplugin').edit(printText);
-            }, this);
     }
 
     update ()

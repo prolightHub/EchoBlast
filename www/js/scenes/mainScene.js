@@ -2,7 +2,6 @@ import game from "../game.js";
 
 var buttons = createButtons();
 
-
 export default class MainScene extends Phaser.Scene {
 
     constructor ()
