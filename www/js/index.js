@@ -1,3 +1,5 @@
+import StartScene from "./scenes/startScene.js";
+import SaveFileScene from "./scenes/saveFileScene.js";
 import MainScene from "./scenes/mainScene.js";
 import PlayScene from "./scenes/playScene.js";
 import FxScene from "./scenes/fxScene.js";
@@ -11,8 +13,11 @@ document.addEventListener('deviceready', function()
         parent: 'game',
         width: 800,
         height: 480,
-		pixelArt : true, 
-        scene: [MainScene, PlayScene, GameOverScene, FxScene],
+        pixelArt : true, 
+        dom: {
+            createContainer: true
+        },
+        scene: [SaveFileScene, StartScene, MainScene, PlayScene, GameOverScene, FxScene],
         physics: {
             default: "arcade",
             arcade: {

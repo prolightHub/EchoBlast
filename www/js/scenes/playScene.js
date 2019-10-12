@@ -96,7 +96,6 @@ export default class PlayScene extends Phaser.Scene {
                 start : 0, 
                 end : 3, 
             }),
-
             frameRate : 10, 
             repeat : -1
 		});

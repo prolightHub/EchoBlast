@@ -20,6 +20,11 @@ var Game = (function()
             scene.scene.start('playScene');
         }
 
+        createNewSaveFile ()
+        {
+            
+        }
+
         beforePlaySceneLoad (player)
         {
             if((!player || player.dead) && this.storedSaveData)

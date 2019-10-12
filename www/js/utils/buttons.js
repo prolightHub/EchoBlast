@@ -49,7 +49,7 @@ function Button(origin, x, y, width, height, color, text, style, onClick, object
 
     this.draw = function(graphics)
     {
-        graphics.fillStyle((typeof this.color === "number") ? this.color : this.color.color32);
+        graphics.fillStyle((typeof this.color === "number") ? this.color : this.color.color32, (typeof this.color === "object") ? this.color.alphaGL : undefined);
         graphics.fillRoundedRect(this.text.x - this.halfWidth * this.offsetX, this.text.y - this.halfHeight * this.offsetY, this.width, this.height, this.round || 0);
     };
 
@@ -61,5 +61,8 @@ function Button(origin, x, y, width, height, color, text, style, onClick, object
                 y < this.text.y - this.halfHeight * this.offsetY + this.height);
     };
 
-    this.onClick = onClick || function() {};
+    this.onClick = function()
+    {
+        return (onClick || function() {}).apply(this, arguments);
+    };
 }
