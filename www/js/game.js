@@ -9,7 +9,7 @@ var Game = (function()
     */
 
     class Game {
-        
+    
         init (scene)
         {
             scene.scene.launch('fxScene');
@@ -20,33 +20,66 @@ var Game = (function()
             scene.scene.start('playScene');
         }
 
-        createNewSaveFile ()
-        {
-            
-        }
-
         beforePlaySceneLoad (player)
         {
-            if((!player || player.dead) && this.storedSaveData)
+            if((!player || player.dead) && this.storedSaveData[this.saveFileId].saveBlock)
             {
                 levelHandler.travelType = "saveBlock";
-                levelHandler.levelName = this.storedSaveData.levelName;
+                levelHandler.levelName = this.storedSaveData[this.saveFileId].levelName || levelHandler.levelName;
             }
+        }
+
+        createSaveFile (id, username)
+        {
+            this.storedSaveData[id] = {
+                id: id,
+                username: username
+            };
+        }
+
+        startSaveFile (id)
+        {
+            this.saveFileId = id;
+        }
+        
+        getSaveFiles (amt)
+        {
+            amt = amt || 4;
+
+            var saveFiles = [];
+
+            for(var i = 0; i < amt; i++)
+            {
+                if(typeof this.storedSaveData[i] === "object")
+                {
+                    saveFiles.push(this.storedSaveData[i]);
+                }
+            }
+
+            return saveFiles;
         }
 
         restore (func)
         {
             var self = this;
-            localforage.getItem("echoblast-saveData", function(err, value)
+            localforage.getItem("adventure-saveData", function(err, value)
             {
                 self.storedSaveData = JSON.parse(value);
+
+                if(!self.storedSaveData)
+                {
+                    self.storedSaveData = {};
+                    localforage.setItem("adventure-saveData", JSON.stringify(self.storedSaveData));
+                }
                 return func.apply(this, arguments);
             });
         }
 
         save (scene, player, saveBlock)
         {
-            this.storedSaveData = {
+            var lastSaveFile = this.storedSaveData[this.saveFileId];
+
+            this.storedSaveData[this.saveFileId] = {
                 levelName: levelHandler.levelName,
                 saveBlock: {
                     name: saveBlock.obj.name
@@ -58,14 +91,17 @@ var Game = (function()
                 }
             };
 
-            localforage.setItem("echoblast-saveData", JSON.stringify(this.storedSaveData));
+            this.storedSaveData[this.saveFileId].id = lastSaveFile.id;
+            this.storedSaveData[this.saveFileId].username = lastSaveFile.username;
+
+            localforage.setItem("adventure-saveData", JSON.stringify(this.storedSaveData));
         }
 
         putSaveDataIntoScene (scene)
         {
-            for(var i in this.storedSaveData.player)
+            for(var i in this.storedSaveData[this.saveFileId].player)
             {
-                scene.player[i] = this.storedSaveData.player[i];
+                scene.player[i] = this.storedSaveData[this.saveFileId].player[i];
             }
         }
 
