@@ -61,8 +61,8 @@ export default class SaveFileScene extends Phaser.Scene {
                 align: 'center'
             }).setOrigin(0.5, 0.5);
 
+            this[this.length - 1].id = this.length - 1;
             this[this.length - 1].onDraw = onDraw || function() {};
-
             this[this.length - 1].state = "new";
         };
         this.newSaveFiles.draw = function()
@@ -86,6 +86,7 @@ export default class SaveFileScene extends Phaser.Scene {
                     break;
 
                 case "used" :
+                    game.startSaveFile(this.id);
                     scene.scene.start('mainScene');
                     break;
             }
@@ -95,6 +96,14 @@ export default class SaveFileScene extends Phaser.Scene {
         this.newSaveFiles.add("2", 415, 130, 245, 100, new Phaser.Display.Color(0, 0, 0, 100), onClick);
         this.newSaveFiles.add("3", 140, 260, 245, 100, new Phaser.Display.Color(0, 0, 0, 100), onClick);
         this.newSaveFiles.add("4", 415, 260, 245, 100, new Phaser.Display.Color(0, 0, 0, 100), onClick);
+
+        var saveFiles = game.getSaveFiles();
+
+        for(var i = 0; i < saveFiles.length; i++)
+        {
+            this.newSaveFiles[i].state = "used";
+            this.newSaveFiles[i].extraText.setText(saveFiles[i].username);
+        }
 
         this.input.on('pointerdown', function (pointer) 
         {
@@ -198,12 +207,14 @@ export default class SaveFileScene extends Phaser.Scene {
             return;
         }
 
-        var saveFile = this.UINewSaveFile;
+        var saveFileBtn = this.UINewSaveFile;
 
         this.endInputUsername();
 
-        saveFile.extraText.setText(username);
-        saveFile.state = "used";
+        saveFileBtn.extraText.setText(username);
+        saveFileBtn.state = "used";
+
+        game.createSaveFile(saveFileBtn.id, username);
     }
 
     startInputUsername (newSaveFile)

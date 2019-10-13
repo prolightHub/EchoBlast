@@ -49,7 +49,7 @@ export default class PlayScene extends Phaser.Scene {
 
             case "saveBlock" :
                 // We used a save block.
-                spawnPoint = levelHandler.level.findObject("Objects", obj => obj.name === game.storedSaveData.saveBlock.name);
+                spawnPoint = levelHandler.level.findObject("Objects", obj => obj.name === game.storedSaveData[game.saveFileId].saveBlock.name);
                 spawnPoint.y += 32;
                 break;
 
