@@ -17,7 +17,7 @@ document.addEventListener('deviceready', function()
         dom: {
             createContainer: true
         },
-        scene: [SaveFileScene, StartScene, MainScene, PlayScene, GameOverScene, FxScene],
+        scene: [StartScene, SaveFileScene, MainScene, PlayScene, GameOverScene, FxScene],
         physics: {
             default: "arcade",
             arcade: {

@@ -48,9 +48,15 @@ function Button(origin, x, y, width, height, color, text, style, onClick, object
     this.color = color;
 
     this.draw = function(graphics)
-    {
+    {     
         graphics.fillStyle((typeof this.color === "number") ? this.color : this.color.color32, (typeof this.color === "object") ? this.color.alphaGL : undefined);
         graphics.fillRoundedRect(this.text.x - this.halfWidth * this.offsetX, this.text.y - this.halfHeight * this.offsetY, this.width, this.height, this.round || 0);
+    
+        if(this.selected)
+        {
+            graphics.lineStyle(4, 0x00ff00, 1);
+            graphics.strokeRect(this.text.x - this.halfWidth * this.offsetX, this.text.y - this.halfHeight * this.offsetY, this.width, this.height, this.round || 0);
+        }
     };
 
     this.isClicked = function(x, y)

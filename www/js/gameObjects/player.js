@@ -17,6 +17,9 @@ export default class Player {
         this.sprite.setOrigin(0, 0);
         this.sprite.setOffset(-1.5, 0);
         
+        scene.physics.add.collider(this.sprite, levelHandler.blockLayer);
+        scene.physics.add.collider(this.sprite, levelHandler.itemsLayer);
+
         this.keys = scene.input.keyboard.createCursorKeys();
 
         if(revive)
@@ -26,6 +29,32 @@ export default class Player {
 
             this.revive();
         }
+        
+		scene.anims.create({
+            key : 'idle', 
+            frames : scene.anims.generateFrameNames('player', 
+            {
+                prefix : '000', 
+                start : 0, 
+                end : 0, 
+            }), 
+            frameRate : 0, 
+            repeat : 0
+        });
+		scene.anims.create({
+            key : 'walk', 
+            frames : scene.anims.generateFrameNames('player', 
+            {
+                prefix : '000', 
+                start : 0, 
+                end : 3, 
+            }),
+            frameRate : 10, 
+            repeat : -1
+		});
+
+        // Set up collision with the player for the walls and tiles
+        this.sprite.body.setCollideWorldBounds(true);
 
         this.lastHurtTime = 100;
         this.hurtInterval = 1000;
@@ -165,6 +194,15 @@ export default class Player {
                 {
                     game.save(scene, this, object);
                 }
+                break;
+
+            case "heart" :
+                this.hp += 4;
+                this.hp = Math.min(this.hp, this.maxHp);
+
+                this.updateHearts(scene);
+
+                levelHandler.itemsLayer.removeTileAt(object.x, object.y);
                 break;
         }
     }

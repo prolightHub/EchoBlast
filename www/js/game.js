@@ -42,6 +42,13 @@ var Game = (function()
             this.saveFileId = id;
         }
         
+        removeSaveFile (id)
+        {
+            delete this.storedSaveData[id];
+
+            localforage.setItem("adventure-saveData", JSON.stringify(this.storedSaveData));
+        }
+
         getSaveFiles (amt)
         {
             amt = amt || 4;

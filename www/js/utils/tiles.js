@@ -4,5 +4,6 @@ const TILES = {
     DOORUP: 3,
     DOORDOWN: 4,
     LAVA: 5,
-    YELLOWSTRIPES: 6
+    YELLOWSTRIPES: 6,
+    HEART: 7
 };

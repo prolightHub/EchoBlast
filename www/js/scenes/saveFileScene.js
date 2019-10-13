@@ -28,7 +28,7 @@ export default class SaveFileScene extends Phaser.Scene {
         this.graphics.fillStyle(rectColor2, rectColor2.alphaGL);
         this.graphics.fillRect(0, 0, 800, 60);
 
-        this.add.text(140, 20, 'Select a file', 
+        this.add.text(140, 20, "Select a file (then click it to play)", 
         {
             fill: '#FFFFFF',
             align: 'left',
@@ -64,6 +64,7 @@ export default class SaveFileScene extends Phaser.Scene {
             this[this.length - 1].id = this.length - 1;
             this[this.length - 1].onDraw = onDraw || function() {};
             this[this.length - 1].state = "new";
+            this[this.length - 1].selected = false;
         };
         this.newSaveFiles.draw = function()
         {
@@ -76,19 +77,29 @@ export default class SaveFileScene extends Phaser.Scene {
 
         var onClick = function()
         {
-            switch(this.state)
+            if(!this.selected)
             {
-                case "new" :
-                    this.state = "used";
-                    this.extraText.setText("");
+                for(var i in scene.newSaveFiles)
+                {
+                    scene.newSaveFiles[i].selected = false;
+                }
 
-                    scene.startInputUsername(this);
-                    break;
+                this.selected = true;
+            }else{
+                switch(this.state)
+                {
+                    case "new" :
+                        this.state = "used";
+                        this.extraText.setText("");
 
-                case "used" :
-                    game.startSaveFile(this.id);
-                    scene.scene.start('mainScene');
-                    break;
+                        scene.startInputUsername(this);
+                        break;
+
+                    case "used" :
+                        game.startSaveFile(this.id);
+                        scene.scene.start('mainScene');
+                        break;
+                }
             }
         };
 
@@ -154,6 +165,8 @@ export default class SaveFileScene extends Phaser.Scene {
         this);
 
         this.scene.get("fxScene").fadeIn(500);   
+
+        this.createOptionButtons();
     }
 
     update (time, delta)
@@ -171,12 +184,63 @@ export default class SaveFileScene extends Phaser.Scene {
                                     new Phaser.Display.Color(0, 90, 100)
         }
 
+        if(buttons.delete)
+        {
+            var selectedAndFull = false;
+            for(var i in this.newSaveFiles)
+            {
+                if(selectedAndFull = (this.newSaveFiles[i].selected && this.newSaveFiles[i].state === "used"))
+                {
+                    break;
+                }
+            }
+
+            buttons.delete.color = selectedAndFull ? 
+                                    new Phaser.Display.Color(0, 140, 40) : 
+                                    new Phaser.Display.Color(0, 90, 100);
+        }
+
         buttons.draw(this.graphics);
     }
 
     render ()
     {
         
+    }
+
+    createOptionButtons ()
+    {
+        buttons.delete = new Button(this, 400, 410, 120, 40, new Phaser.Display.Color(0, 90, 100), "Delete", 
+        {
+            fontSize: '20px',
+            fill: '#FFFFFF',
+            align: 'center',
+            fontFamily: '"Press Start 2P"'
+        }, 
+        function()
+        {
+            for(var i in this.newSaveFiles)
+            {
+                if(this.newSaveFiles[i].selected)
+                {
+                    game.removeSaveFile(this.newSaveFiles[i].id);
+
+                    this.newSaveFiles[i].state = "new";
+                    this.newSaveFiles[i].extraText.setText("New!!");
+
+                    break;
+                }
+            }
+        },
+        {
+            offsetX: 0.6
+        });
+    }
+
+    destroyOptionButtons ()
+    {
+        buttons.delete.text.destroy();
+        delete buttons.delete;
     }
 
     endInputUsername ()
@@ -196,6 +260,8 @@ export default class SaveFileScene extends Phaser.Scene {
 
         buttons.create.text.destroy();        
         delete buttons.create;
+
+        this.createOptionButtons();
     }
 
     finishInputUsername ()
@@ -246,5 +312,7 @@ export default class SaveFileScene extends Phaser.Scene {
         {
             offsetX: 0.6
         });
+
+        this.destroyOptionButtons();
     }
 }
